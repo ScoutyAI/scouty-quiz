@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scouty AI Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,700&display=swap');
+    html, body {
+      background: #101014;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      min-height: 100vh;
+      min-width: 100vw;
+      box-sizing: border-box;
+      position: relative;
+      overflow-x: hidden;
+    }
+/* Make radio buttons bigger and align label left of radio */
+
+
+.radio-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  gap: 32px;
+  /* Prevents child labels from shifting if text is different width */
+}
+.radio-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  gap: 22px;
+  font-size: 1.27rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 250px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.radio-label input[type="radio"] {
+  accent-color: #2a70ed;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+}
+
+.radio-error {
+  color: #fa8a7b;
+  font-size: 1rem;
+  margin-top: 9px;
+  margin-bottom: -10px;
+  text-align: center;
+  min-height: 20px;
+}
+
+
+    .background-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      object-fit: cover;
+      object-position: center;
+      background: #111;
+      transition: opacity 0.6s cubic-bezier(.5,0,.5,1);
+    }
+    .background-img.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .container {
+      min-height: 100vh;
+      min-width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+      padding: 50px 16px 0 16px;
+    }
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .logo {
+      margin-bottom: 32px;
+      margin-top: 0;
+      width: 210px;
+      max-width: 88vw;
+      filter: drop-shadow(0 0 10px #0a0a0a77);
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h1 {
+      color: #fff;
+      font-size: 2.4rem;
+      margin: 0 0 18px 0;
+      font-weight: 800;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 24px #000c;
+      text-align: center;
+    }
+    .subtitle {
+      color: #fff;
+      font-weight: 600;
+      font-size: 1.14rem;
+      margin-bottom: 14px;
+      margin-top: 8px;
+      text-shadow: 0 2px 12px #000c;
+      text-align: center;
+    }
+    .bodytext {
+      color: #fff;
+      font-size: 1.13rem;
+      margin-bottom: 36px;
+      line-height: 1.57;
+      max-width: 650px;
+      text-align: center;
+      text-shadow: 0 2px 16px #000d;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .q-title {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 2.55rem;
+      font-weight: 400;
+      color: #fff;
+      letter-spacing: -0.5px;
+      margin-top: 24px;
+      margin-bottom: 38px;
+      line-height: 1.13;
+      text-align: center;
+      width: 100%;
+    }
+    .q-desc {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 1.02rem;
+      font-style: italic;
+      color: #bfc2cc;
+      margin-bottom: 25px;
+      margin-top: -20px;
+      text-align: center;
+      width: 100%;
+    }
+    .personal-form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .personal-form label {
+      text-align: left;
+      align-self: flex-start;
+      margin-top: 10px;
+      margin-bottom: 3px;
+      font-size: 1.09rem;
+      color: #fff;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1.5px solid #303340;
+      font-size: 1rem;
+      margin-bottom: 3px;
+      background: #17171f;
+      color: #fff;
+      outline: none;
+      box-sizing: border-box;
+      margin-top: 2px;
+      resize: vertical;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    input:focus, select:focus, textarea:focus {
+      border: 1.5px solid #2a70ed;
+      background: #191a22;
+    }
+    .next-btn, .back-btn, .start-btn {
+      background: #fff;
+      color: #222;
+      border: none;
+      border-radius: 16px;
+      padding: 13px 38px;
+      font-size: 1.08rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 28px;
+      margin-right: 12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.13);
+      transition: background 0.18s, color 0.18s;
+      outline: none;
+      opacity: 0.96;
+      display: inline-block;
+    }
+    .back-btn {
+      background: #eee;
+      color: #333;
+    }
+    .next-btn:hover, .start-btn:hover, .next-btn:focus, .start-btn:focus {
+      background: #222;
+      color: #fff;
+      opacity: 1;
+    }
+    .back-btn:hover, .back-btn:focus {
+      background: #ccc;
+      color: #222;
+    }
+    .btn-row {
+      display:flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 20px;
+    }
+    @media (max-width: 700px) {
+      .container { padding: 18px 2vw 0 2vw;}
+      .center-content, .personal-form { padding: 0; max-width: 99vw;}
+      .q-title { font-size: 1.4rem; margin-bottom: 24px;}
+    }
+  
+.result-title {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 3.1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.7px;
+  margin-top: 52px;
+  margin-bottom: 24px;
+  line-height: 1.18;
+  text-align: center;
+  text-shadow: 0 2px 16px #000c;
+}
+.result-desc {
+  font-family: 'Montserrat', Arial, sans-serif;
+  font-size: 1.45rem;
+  font-weight: 400;
+  color: #d6d6ea;
+  margin-bottom: 40px;
+  margin-top: 0;
+  text-align: center;
+  line-height: 1.5;
+}
+@media (max-width: 700px) {
+  .result-title { font-size: 2rem; margin-top: 28px; margin-bottom: 18px;}
+  .result-desc { font-size: 1.09rem; }
+}
+
+/* For Q6 only */
+.ai-radio-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  max-width: 370px;
+}
+.ai-radio-row {
+  display: grid;
+  grid-template-columns: 1fr 38px;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 24px;
+}
+.ai-radio-row label {
+  font-size: 1.18rem;
+  font-weight: 500;
+  text-align: left;
+  margin-bottom: 0;
+  margin-right: 8px;
+}
+.ai-radio-row input[type="radio"] {
+  width: 32px;
+  height: 32px;
+  accent-color: #2a70ed;
+  margin: 0;
+  display: inline-block;
+}
+#aiWhich {
+  margin-left: 0;
+  margin-top: -7px;
+  margin-bottom: 18px;
+  width: 100%;
+  display: none;
+}
+
+@media (max-width: 480px) {
+  #q9 .slider-label-row {
+    max-width: 98vw !important;
+    font-size: 0.89em !important;
+  }
+  #q9 .slider-label-row span {
+    min-width: 64px !important;
+    font-size: 0.89em !important;
+  }
+}
+
+.center-radio-group {
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100%;
+  margin: 0 auto 10px auto;
+  gap: 22px;
+  padding: 0;
+}
+.center-radio-group .radio-label {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* ===== Mobile welcome screen fix ===== */
+@media (max-width: 520px) {
+  .container {
+    justify-content: flex-start !important;
+    padding-top: calc(18px + env(safe-area-inset-top)) !important;
+    padding-bottom: calc(28px + env(safe-area-inset-bottom)) !important;
+    min-height: 100svh;
+  }
+
+  #welcome-screen {
+    margin-top: 0 !important;
+  }
+
+  .logo {
+    width: 160px !important;
+    margin-bottom: 16px !important;
+  }
+
+  h1 {
+    font-size: 1.65rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .subtitle,
+  .bodytext {
+    font-size: 1rem !important;
+    line-height: 1.45 !important;
+  }
+}
+
+</style>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <img class="background-img" id="bgimg" src="background3.jpg" alt="Background" />
+  <div class="container">
+<!-- Frontend honeypot -->
+<input
+  type="text"
+  id="website_confirm"
+  autocomplete="off"
+  tabindex="-1"
+  aria-hidden="true"
+  style="position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; opacity:0;"
+>
+
+<!-- Backend honeypot -->
+<input
+  type="text"
+  id="__hp_scouty__"
+  autocomplete="off"
+  tabindex="-1"
+  aria-hidden="true"
+  style="position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; opacity:0;"
+>
+
+
+    <!-- WELCOME -->
+    <div id="welcome-screen" class="center-content">
+      <img src="logo.png" alt="Scouty AI Logo" class="logo" style="margin-top:0;" />
+      <h1 style="margin-bottom:10px;">Help Us Build the Future of Sourcing</h1>
+      <div class="subtitle" style="margin-bottom:10px;">Hi there!</div>
+      <div class="bodytext" style="margin-bottom:18px;">
+        I'm Angel, the founder of a new AI-powered sourcing platform.<br />
+        We're building a tool to simplify the RFQ process, automate landed cost calculations, and streamline supplier communication.<br /><br />
+        But we want to build it the right way — by learning from real professionals like you.<br /><br />
+        This short survey (5–6 mins) will help us shape something that truly solves your biggest pain points.<br /><br />
+        Let’s make sourcing smarter — together. <span style="font-size: 1.2em;">🙌</span>
+      </div>
+      <button class="start-btn" style="margin-top: 18px;" onclick="goToStep('q1')">Let's Go</button>
+    </div>
+
+    <!-- Q1: Personal Info -->
+    <div id="q1" class="center-content" style="display:none;">
+      <div class="q-title" style="margin-bottom:28px;">📋 Personal Info</div>
+      <div class="q-desc" style="margin-bottom:40px;">Please fill in your contact and company details below so we can better understand who you are.</div>
+      <form id="form-q1" class="personal-form" onsubmit="event.preventDefault(); saveQ1(); goToStep('q2');">
+        <label>First Name <span style="color:#fa8a7b">*</span></label>
+        <input type="text" id="firstName" required />
+        <label>Last Name <span style="color:#fa8a7b">*</span></label>
+        <input type="text" id="lastName" required />
+        <label>Phone Number</label>
+        <div style="display:flex;gap:7px; width:100%;">
+          <select id="countryCode" name="countryCode" style="max-width:120px;">
+            <option value="+1" data-label="🇺🇸 United States (+1)">+1</option>
+            <option value="+44" data-label="🇬🇧 United Kingdom (+44)">+44</option>
+            <option value="+86" data-label="🇨🇳 China (+86)">+86</option>
+            <option value="+359" data-label="🇧🇬 Bulgaria (+359)">+359</option>
+          </select>
+          <input type="tel" id="phone" placeholder="Phone number" style="flex:1;" />
+        </div>
+        <label>Email <span style="color:#fa8a7b">*</span></label>
+        <input type="email" id="email" required />
+        <label>Company Name <span style="color:#fa8a7b">*</span></label>
+        <input type="text" id="companyName" required />
+        <label>Company Website <span style="color:#fa8a7b">*</span></label>
+        <div style="width:100%; text-align:left;">
+          <input type="url" id="website" required placeholder="https://" />
+        </div>
+        <label>LinkedIn Profile</label>
+        <input type="url" id="linkedin" placeholder="https://" />
+        <label>Current Job Title <span style="color:#fa8a7b">*</span></label>
+        <input
+          type="text"
+          id="jobTitle"
+          required
+          placeholder="e.g., Sourcing Manager, Operations Lead, Supply Chain Director"
+        />
+        <div class="btn-row">
+          <button class="back-btn" type="button" onclick="goToStep('q19')">Back</button>
+          <button class="next-btn" type="submit">Next</button>
+        </div>
+      </form>
+    </div>
+
+    
+    <!-- Q2: Product Categories -->
+    <div id="q2" class="center-content" style="display:none;">
+      <div class="q-title">What product categories do you mostly work with?</div>
+      <textarea
+        rows="3"
+        id="categories"
+        placeholder="Example: Home appliances, packaging, electronics, tools, industrial components, apparel, etc."
+      ></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+      <div class="btn-row">
+        <button class="back-btn" type="button" onclick="goToStep('q1')">Back</button>
+        <button class="next-btn" type="button" onclick="nextRequiredInput('q3', 'categories', 'This field is required.')">Next</button>
+      </div>
+    </div>
+
+<!-- Q3: Need to Find New Suppliers -->
+<div id="q3" class="center-content" style="display:none;">
+  <div class="q-title">Do you frequently need to find new suppliers or products?</div>
+  <div class="radio-row center-radio-group">
+    <label class="radio-label">
+      Yes
+      <input type="radio" name="q3-radio" value="yes" id="findSuppliersYes" onclick="showQ4()">
+    </label>
+    <label class="radio-label">
+      No
+      <input type="radio" name="q3-radio" value="no" id="findSuppliersNo" onclick="showExecutor()">
+    </label>
+  </div>
+<div class="radio-error" style="display:none;"></div>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q2')">Back</button>
+  </div>
+</div>
+
+<!-- Q3a: Executor Message -->
+<div id="executor-msg" class="center-content" style="display:none;">
+  <div class="result-title">🛠️ You’re an Executor</div>
+  <div class="result-desc">
+    You mostly work with repeat orders and familiar suppliers.<br>
+    Scouty AI helps you automate the routine and win back time for higher-value work.
+  </div>
+  <div class="btn-row">
+    <button class="next-btn" type="button" onclick="goToStep('q5')">Continue</button>
+  </div>
+</div>
+
+
+<!-- Q4: Repeat Orders? -->
+<div id="q4" class="center-content" style="display:none;">
+  <div class="q-title">Do you mostly work with repeat orders and a fixed group of suppliers?</div>
+  <div class="radio-row">
+  <label class="radio-label">
+    Yes
+    <input type="radio" name="q4-radio" value="yes" id="repeatYes" onclick="showHybrid()">
+  </label>
+  <label class="radio-label">
+    No
+    <input type="radio" name="q4-radio" value="no" id="repeatNo" onclick="showExplorer()">
+  </label>
+</div>
+<div class="radio-error" style="display:none;"></div>
+
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q3')">Back</button>
+  </div>
+</div>
+
+<!-- Q4a: Hybrid Message -->
+<div id="hybrid-msg" class="center-content" style="display:none;">
+  <div class="result-title">♻️ You’re a Hybrid</div>
+  <div class="result-desc">
+    You balance repeat suppliers with occasional sourcing needs.<br>
+    Scouty AI’s modular workflows help you work smarter, not harder.
+  </div>
+  <div class="btn-row">
+    <button class="next-btn" type="button" onclick="goToStep('q5')">Continue</button>
+  </div>
+</div>
+
+
+<!-- Q4b: Explorer Message -->
+<div id="explorer-msg" class="center-content" style="display:none;">
+  <div class="result-title">🔍 You’re an Explorer</div>
+  <div class="result-desc">
+    You’re constantly looking for new suppliers and smarter sourcing paths.<br>
+    Scouty AI helps you cut through the noise and quote faster.
+  </div>
+  <div class="btn-row">
+    <button class="next-btn" type="button" onclick="goToStep('q5')">Continue</button>
+  </div>
+</div>
+
+
+<!-- Q5: Sourcing Challenges -->
+<div id="q5" class="center-content" style="display:none;">
+  <div class="q-title">What sourcing challenges are you currently facing?</div>
+  <div class="q-desc">We’d love to understand the biggest pain points in your current workflow.</div>
+  <textarea id="challenge" rows="3" placeholder="Example: Supplier delays, inconsistent quotes, manual quoting, hard to calculate landed cost, difficulty finding reliable suppliers, etc."></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q4')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q6', 'challenge', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q6: Used AI-based Tools -->
+<div id="q6" class="center-content" style="display:none;">
+  <div class="q-title">Have you used any AI-based tools for sourcing or quoting before?</div>
+  <div class="q-desc">We're curious if you've experimented with any AI tools in your workflow.</div>
+  
+  <div class="ai-radio-group">
+    <div class="ai-radio-row">
+      <label for="aiUsedYes">Yes — I’ve used:</label>
+      <input type="radio" name="q6-radio" value="yes" id="aiUsedYes" onclick="showAiInput()">
+    </div>
+    <input type="text" id="aiWhich" placeholder="Name the tools or platforms" />
+    <div class="ai-radio-row">
+      <label for="aiUsedNo">No</label>
+      <input type="radio" name="q6-radio" value="no" id="aiUsedNo" onclick="hideAiInput()">
+    </div>
+    <div class="ai-radio-row">
+      <label for="aiUsedNotSure">Not sure what counts as AI</label>
+      <input type="radio" name="q6-radio" value="notSure" id="aiUsedNotSure" onclick="hideAiInput()">
+    </div>
+  </div>
+<div class="radio-error" style="display:none;"></div>
+
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q5')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredRadio('q7', 'q6-radio', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q7: Monthly RFQs -->
+<div id="q7" class="center-content" style="display:none;">
+  <div class="q-title">How many RFQs do you typically handle per month?</div>
+  <div class="q-desc">To understand your sourcing intensity, how many RFQs or quote requests do you usually manage each month?</div>
+  <select id="rfqs">
+    <option value="">Select...</option>
+    <option value="1-5">1–5</option>
+    <option value="6-20">6–20</option>
+    <option value="21-50">21–50</option>
+    <option value="51-100">51–100</option>
+    <option value="100+">100+</option>
+    <option value="varies">It varies a lot</option>
+  </select>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q6')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredSelect('q8', 'rfqs', 'Please select an option.')">Next</button>
+  </div>
+</div>
+
+<!-- Q8: Most Frustrating RFQ Step -->
+<div id="q8" class="center-content" style="display:none;">
+  <div class="q-title">What’s the most frustrating or time-consuming part of your RFQ or quoting process today?</div>
+  <textarea id="rfqFrustration" rows="3" placeholder="Example: “Following up with suppliers,” “Waiting for freight cost estimates,” “Manually comparing quotes,” etc."></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q7')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q9', 'rfqFrustration', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q9: Quoting Workflow Confidence (Slider) -->
+<div id="q9" class="center-content" style="display:none;">
+  <div class="q-title">How confident are you in your current quoting or supplier discovery workflow?</div>
+  <div style="margin:18px 0 12px 0;">On a scale of 1 to 10, how smooth is your current quoting or supplier discovery process?</div>
+  <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:20px;">
+    <span>1</span>
+    <input type="range" id="workflowConfidence" min="1" max="10" value="5" style="width:230px;">
+    <span>10</span>
+  </div>
+  <div style="display:flex; justify-content:space-between; width:100%; max-width:450px; margin:0 auto 4px auto; font-size:1.04em; color:#bfc2cc;">
+  <span style="text-align:left; display:block; min-width:95px;">Total chaos</span>
+  <span style="text-align:right; display:block; min-width:155px; margin-left:auto;">Runs like a machine</span>
+</div>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q8')">Back</button>
+    <button class="next-btn" type="button" onclick="goToStep('q10')">Next</button>
+  </div>
+</div>
+
+<!-- Q10: RFQ Worth Evaluation -->
+<div id="q10" class="center-content" style="display:none;">
+  <div class="q-title">When a new RFQ comes in, how do you decide if it’s worth quoting?</div>
+  <textarea id="rfqWorth" rows="3" placeholder="Example: “We look at client size, target price, shipping location, and production feasibility.”"></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q9')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q11', 'rfqWorth', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q11: Landed Cost Calculation -->
+<div id="q11" class="center-content" style="display:none;">
+  <div class="q-title">How do you currently calculate landed cost (freight, duty, tariffs)? What tools do you use?</div>
+  <textarea id="landedCost" rows="3" placeholder='Example: “We use Excel and online freight calculators,” “Manual estimates via freight forwarder,” or “ERP with built-in cost logic.”'></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q10')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q12', 'landedCost', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q12: Supplier Communication -->
+<div id="q12" class="center-content" style="display:none;">
+  <div class="q-title">How do you communicate with suppliers — and what’s the biggest communication pain point?</div>
+  <textarea id="supplierComm" rows="3" placeholder='Example: “Language barriers,” “Time zone delays,” “Repetitive follow-ups,” “Missing attachments.”'></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q11')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q13', 'supplierComm', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q13: Supplier Locations -->
+<div id="q13" class="center-content" style="display:none;">
+  <div class="q-title">Where are most of your suppliers located?</div>
+  <textarea id="supplierLocations" rows="2" placeholder='Example: “China, Vietnam, India, Germany, Eastern Europe, etc.”'></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q12')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q14', 'supplierLocations', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q14: Tools or Platforms Used -->
+<div id="q14" class="center-content" style="display:none;">
+  <div class="q-title">What tools or platforms do you currently use in your workflow?</div>
+  <textarea id="platforms" rows="3" placeholder='Example: “Alibaba, Excel, WhatsApp, Notion, ERP systems, Freightos, Google Sheets”'></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q13')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q15', 'platforms', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q15: Scouty AI Wish -->
+<div id="q15" class="center-content" style="display:none;">
+  <div class="q-title">If Scouty AI could solve just one thing for you, what should it be?</div>
+  <textarea id="aiWish" rows="3" placeholder='Example: “Quote generation,” “Supplier search,” “Cost calculation,” “Client communication,” “Managing product specs”'></textarea>
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q14')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q16', 'aiWish', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q16: Would You Trust AI? -->
+<div id="q16" class="center-content" style="display:none;">
+  <div class="q-title">Would you trust an AI assistant to draft 80% of a quote or supplier shortlist for you? Why or why not?</div>
+  <textarea id="trustAI" rows="3" required placeholder='Share any hesitation, curiosity, or what would make you feel confident. You can also skip this question if you are not sure yet.'></textarea><span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span><div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q15')">Back</button><button class="next-btn" type="button" onclick="nextRequiredInput('q17', 'trustAI', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q17: MVP Review -->
+<div id="q17" class="center-content" style="display:none;">
+  <div class="q-title">Would you be open to reviewing our MVP when it’s ready?</div><div class="radio-row">
+  <label class="radio-label">
+    Yes
+    <input type="radio" name="q17-radio" value="Yes" id="mvpYes">
+  </label>
+  <label class="radio-label">
+    No
+    <input type="radio" name="q17-radio" value="No" id="mvpNo">
+  </label>
+</div>
+<div class="radio-error" style="display:none;"></div>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q16')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredRadio('q18', 'q17-radio', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q18: Best Way to Follow Up -->
+<div id="q18" class="center-content" style="display:none;">
+  <div class="q-title">What’s the best way to follow up with you?</div>
+  <input type="text" id="followUp" placeholder='Example: “Email,” “LinkedIn,” “WhatsApp at +1 234 567 8901”' style="margin-bottom:28px;">
+<span class="input-error" style="display:none;color:#fa8a7b;font-size:1rem;margin-top:8px;min-height:20px;"></span>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q17')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredInput('q19', 'followUp', 'This field is required.')">Next</button>
+  </div>
+</div>
+
+<!-- Q19: How did you hear about us? -->
+<div id="q19" class="center-content" style="display:none;">
+  <div class="q-title">How did you hear about us?</div><div class="radio-row">
+  <label class="radio-label">
+    Social media
+    <input type="radio" name="q19-radio" value="Social media">
+  </label>
+  <label class="radio-label">
+    Word of mouth
+    <input type="radio" name="q19-radio" value="Word of mouth">
+  </label>
+  <label class="radio-label">
+    Online search
+    <input type="radio" name="q19-radio" value="Online search">
+  </label>
+  <label class="radio-label">
+    Advertisement
+    <input type="radio" name="q19-radio" value="Advertisement">
+  </label>
+  <label class="radio-label">
+    Other
+    <input type="radio" name="q19-radio" value="Other">
+  </label>
+</div>
+<div class="radio-error" style="display:none;"></div>
+  <div class="btn-row">
+    <button class="back-btn" type="button" onclick="goToStep('q18')">Back</button>
+    <button class="next-btn" type="button" onclick="nextRequiredRadio('thankyou', 'q19-radio', 'This field is required.')">Finish</button>
+  </div>
+</div>
+
+    <!-- Thank You -->
+    <div id="thankyou" class="center-content" style="display:none;">
+  <div class="q-title" style="font-size: 2.2em; margin-bottom: 40px;">🙌 Thank you!</div>
+  <div class="q-desc" style="margin-bottom: 36px;">
+    We truly appreciate your input. Your feedback will help us create a smarter, faster, and more reliable sourcing platform. We look forward to contacting you soon with early access and trial opportunities!
+  </div>
+  <div class="btn-row" style="justify-content: center;">
+  <button class="back-btn" type="button" onclick="goToStep('q19')">Back</button>
+  <button class="next-btn" type="button" onclick="submitQuiz()">Finish and Submit</button>
+</div>
+
+</div>
+
+  <script>
+    let quizData = {};
+function showQ4() {
+  goToStep('q4');
+}
+function showExecutor() {
+  goToStep('executor-msg');
+}
+function showHybrid() {
+  goToStep('hybrid-msg');
+}
+function showExplorer() {
+  goToStep('explorer-msg');
+}
+function showAiInput() {
+  document.getElementById('aiWhich').style.display = 'block';
+}
+function hideAiInput() {
+  document.getElementById('aiWhich').style.display = 'none';
+}
+
+
+    function goToStep(id) {
+      let steps = [
+  'welcome-screen',
+  'q1',
+  'q2',
+  'q3',
+  'executor-msg',
+  'q4',
+  'hybrid-msg',
+  'explorer-msg',
+  'q5',
+  'q6',
+  'q7',
+  'q8',
+  'q9',
+  'q10',
+  'q11',
+  'q12',
+  'q13',
+  'q14',
+  'q15',
+  'q16',
+  'q17',
+  'q18',
+  'q19',
+  'thankyou'
+];
+      steps.forEach((s) => {
+        let el = document.getElementById(s);
+        if (el) el.style.display = 'none';
+      });
+
+      if (id !== 'welcome-screen') {
+        let bg = document.getElementById('bgimg');
+        if (bg) bg.classList.add('hide');
+        document.body.style.background = '#101014';
+      } else {
+        let bg = document.getElementById('bgimg');
+        if (bg) bg.classList.remove('hide');
+      }
+
+      let show = document.getElementById(id);
+      if (show) show.style.display = 'flex';
+
+      restoreFields(id);
+    }
+
+    function saveQ1() {
+      quizData.firstName = document.getElementById('firstName').value;
+      quizData.lastName = document.getElementById('lastName').value;
+      quizData.countryCode = document.getElementById('countryCode').value;
+      quizData.phone = document.getElementById('phone').value;
+      quizData.email = document.getElementById('email').value;
+      quizData.companyName = document.getElementById('companyName').value;
+      quizData.website = document.getElementById('website').value;
+      quizData.linkedin = document.getElementById('linkedin').value;
+      quizData.jobTitle = document.getElementById('jobTitle').value;
+    }
+    function saveQ2() {
+      quizData.categories = document.getElementById('categories').value;
+    }
+    function saveQ3() {
+      quizData.findSuppliers = document.getElementById('findSuppliersYes').checked
+        ? 'yes'
+        : document.getElementById('findSuppliersNo').checked
+        ? 'no'
+        : '';
+    }
+    // Removed broken saveQ4()
+    function saveQ5() {
+      quizData.rfqs = document.getElementById('rfqs').value;
+    }
+    function saveQ6() {
+      quizData.challenge = document.getElementById('challenge').value;
+    }
+    
+    function restoreFields(id) {
+      if (id === 'q1') {
+        if (quizData.firstName !== undefined)
+          document.getElementById('firstName').value = quizData.firstName;
+        if (quizData.lastName !== undefined)
+          document.getElementById('lastName').value = quizData.lastName;
+        if (quizData.countryCode !== undefined)
+          document.getElementById('countryCode').value = quizData.countryCode;
+        if (quizData.phone !== undefined)
+          document.getElementById('phone').value = quizData.phone;
+        if (quizData.email !== undefined)
+          document.getElementById('email').value = quizData.email;
+        if (quizData.companyName !== undefined)
+          document.getElementById('companyName').value = quizData.companyName;
+        if (quizData.website !== undefined)
+          document.getElementById('website').value = quizData.website;
+        if (quizData.linkedin !== undefined)
+          document.getElementById('linkedin').value = quizData.linkedin;
+        if (quizData.jobTitle !== undefined)
+          document.getElementById('jobTitle').value = quizData.jobTitle;
+      }
+      if (id === 'q2') {
+        if (quizData.categories !== undefined)
+          document.getElementById('categories').value = quizData.categories;
+      }
+      if (id === 'q3') {
+        if (quizData.findSuppliers === 'yes')
+          document.getElementById('findSuppliersYes').checked = true;
+        if (quizData.findSuppliers === 'no')
+          document.getElementById('findSuppliersNo').checked = true;
+      }
+      
+      if (id === 'q5') {
+        if (quizData.rfqs !== undefined)
+          document.getElementById('rfqs').value = quizData.rfqs;
+      }
+      if (id === 'q6') {
+        if (quizData.challenge !== undefined)
+          document.getElementById('challenge').value = quizData.challenge;
+      }
+      
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var select = document.getElementById('countryCode');
+      if (select) {
+        function showExtensionOnly() {
+          for (let i = 0; i < select.options.length; i++) {
+            select.options[i].textContent = select.options[i].value;
+          }
+        }
+        select.addEventListener('mousedown', function (e) {
+          for (let i = 0; i < select.options.length; i++) {
+            select.options[i].textContent = select.options[i].getAttribute(
+              'data-label'
+            );
+          }
+        });
+        select.addEventListener('blur', showExtensionOnly);
+        select.addEventListener('change', showExtensionOnly);
+        showExtensionOnly();
+      }
+      restoreFields('q1'); // Restore first page data on load (optional)
+    });
+  
+function showError(el, msg) {
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideError(el) {
+  if (!el) return;
+  el.style.display = 'none';
+}
+
+function nextRequiredRadio(nextStep, radioName, errMsg) {
+  let radios = document.getElementsByName(radioName);
+  let checked = false;
+  for (let i = 0; i < radios.length; i++) {
+    if (radios[i].checked) checked = true;
+  }
+  let errEl = radios[0].closest('.center-content').querySelector('.radio-error');
+  if (!checked) {
+    showError(errEl, errMsg);
+    return;
+  }
+  hideError(errEl);
+  goToStep(nextStep);
+}
+
+function nextRequiredInput(nextStep, inputId, errMsg) {
+  let inp = document.getElementById(inputId);
+  let errEl = inp.nextElementSibling;
+  if (!inp.value.trim()) {
+    showError(errEl, errMsg);
+    inp.focus();
+    return;
+  }
+  hideError(errEl);
+  goToStep(nextStep);
+}
+
+function nextRequiredSelect(nextStep, selectId, errMsg) {
+  let sel = document.getElementById(selectId);
+  let errEl = sel.nextElementSibling;
+  if (!sel.value) {
+    showError(errEl, errMsg);
+    sel.focus();
+    return;
+  }
+  hideError(errEl);
+  goToStep(nextStep);
+}
+
+async function submitQuiz() {
+  const data = {
+timestamp: new Date().toISOString(),
+__hp_scouty__: document.getElementById("__hp_scouty__")?.value || "",
+
+  first_name: document.getElementById('firstName').value,
+  last_name: document.getElementById('lastName').value,
+  email: document.getElementById('email').value,
+  company_name: document.getElementById('companyName').value,
+  phone_code: document.getElementById('countryCode').value,
+  phone_number: document.getElementById('phone').value,
+  job_title: document.getElementById('jobTitle').value,
+  website: document.getElementById('website').value,
+  linkedin_profile: document.getElementById('linkedin').value,
+  categories: document.getElementById('categories').value,
+  find_suppliers: document.querySelector('input[name="q3-radio"]:checked')?.value || '',
+  repeat_orders: document.querySelector('input[name="q4-radio"]:checked')?.value || '',
+  challenge: document.getElementById('challenge').value,
+  ai_used: document.querySelector('input[name="q6-radio"]:checked')?.value || '',
+  ai_tools: document.getElementById('aiWhich').value,
+  rfqs: document.getElementById('rfqs').value,
+  rfq_frustration: document.getElementById('rfqFrustration').value,
+  workflow_confidence: document.getElementById('workflowConfidence').value,
+  rfq_worth: document.getElementById('rfqWorth').value,
+  landed_cost: document.getElementById('landedCost').value,
+  supplier_comm: document.getElementById('supplierComm').value,
+  supplier_locations: document.getElementById('supplierLocations').value,
+  platforms: document.getElementById('platforms').value,
+  ai_wish: document.getElementById('aiWish').value,
+  trust_ai: document.getElementById('trustAI').value,
+  mvp_review: document.querySelector('input[name="q17-radio"]:checked')?.value || '',
+  follow_up: document.getElementById('followUp').value,
+  hear_about_us: document.querySelector('input[name="q19-radio"]:checked')?.value || '',
+};
+
+  const btn = document.querySelector('#thankyou .next-btn');
+
+// anti-spam first
+if (document.getElementById("website_confirm")?.value) return;
+
+// hard double-submit guard
+if (btn?.dataset.submitted) return;
+btn.dataset.submitted = "1";
+
+// then disable button (UI)
+if (btn) {
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+}
+
+
+try {
+  await fetch("https://scouty-api.onrender.com/submit-form", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+});
+
+
+  alert("Submitted ✅");
+  if (btn) { btn.textContent = "Submitted";
+btn.disabled = true;   // ✅ prevents double submit
+ }
+} catch (err) {
+  alert("Error submitting data. Please try again.");
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = "Finish and Submit";
+    delete btn.dataset.submitted;   // 👈 ADD THIS LINE
+  }
+}
+
+
+</script>
+</body>
+</html>
